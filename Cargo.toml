@@ -1,0 +1,14 @@
+[package]
+name = "timeline"
+version = "0.1.0"
+authors = ["Spaceface16518 <33424649+Spaceface16518@users.noreply.github.com>"]
+edition = "2018"
+
+[lib]
+path = "src/lib.rs"
+name = "timeline"
+
+[dependencies]
+regex = "1.1"
+serde = "1.0"
+structopt = "0.2"
