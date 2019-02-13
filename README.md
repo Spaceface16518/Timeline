@@ -1,5 +1,7 @@
 # Timeline
 
+[![Build Status](https://travis-ci.com/Spaceface16518/Timeline.svg?branch=master)](https://travis-ci.com/Spaceface16518/Timeline)
+
 Parsing and processing of a simple timeline format
 
 ## Summary
