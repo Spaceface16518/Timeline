@@ -5,7 +5,9 @@ use timeline::Entry;
 fn main() {
     let input = App::from_args();
     let entry = match input.subcmd {
-        Command::Parse { entry_parse} => Entry::new(entry_parse.label, entry_parse.start, entry_parse.end),
+        Command::Parse { entry_parse } => {
+            Entry::new(entry_parse.label, entry_parse.start, entry_parse.end)
+        },
     };
     println!("{}", to_string(&entry).unwrap());
 }

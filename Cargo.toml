@@ -9,6 +9,6 @@ path = "src/lib.rs"
 name = "timeline"
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"]}
+serde = { version = "1.0", features = ["derive"] }
 structopt = "0.2"
 serde_json = "1"
