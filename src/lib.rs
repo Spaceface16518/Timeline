@@ -141,7 +141,6 @@ impl<T: Into<i32>> From<T> for Date {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn test_entry_with_end() {
         let entry = Entry::new(

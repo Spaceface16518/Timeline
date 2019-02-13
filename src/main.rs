@@ -5,7 +5,7 @@ use timeline::Entry;
 fn main() {
     let input = App::from_args();
     let entry = match input.subcmd {
-        Command::Parse { label, start, end } => Entry::new(label, start, end),
+        Command::Parse { entry_parse} => Entry::new(entry_parse.label, entry_parse.start, entry_parse.end),
     };
     println!("{}", to_string(&entry).unwrap());
 }
@@ -25,14 +25,20 @@ enum Command {
                  JSON)"
     )]
     Parse {
-        /// The label for this entry
-        #[structopt(short = "l", long = "label")]
-        label: String,
-        /// The start year or point year
-        #[structopt(short = "s", long = "start")]
-        start: i32,
-        /// The end year
-        #[structopt(short = "e", long = "end")]
-        end: Option<i32>,
+        #[structopt(flatten)]
+        entry_parse: EntryParse,
     },
+}
+
+#[derive(Debug, StructOpt)]
+struct EntryParse {
+    /// The label for this entry
+    #[structopt(short = "l", long = "label")]
+    label: String,
+    /// The start year or point year
+    #[structopt(short = "s", long = "start")]
+    start: i32,
+    /// The end year
+    #[structopt(short = "e", long = "end")]
+    end: Option<i32>,
 }
