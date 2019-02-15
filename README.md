@@ -17,7 +17,7 @@ Timeline may not be feature complete. These are all the planned (and implemented
 
 - [ ] Parse input
   - [x] into JSON
-  - [ ] into BSON
+  - [x] into BSON
   - [ ] into other formats (open ended)
 - [ ] Store dates
   - [ ] in internal database

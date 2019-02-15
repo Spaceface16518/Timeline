@@ -1,15 +1,26 @@
+use bson::to_bson;
+use regex::Regex;
 use serde_json::to_string;
 use structopt::StructOpt;
 use timeline::Entry;
 
 fn main() {
     let input = App::from_args();
+    let b: bool;
     let entry = match input.subcmd {
-        Command::Parse { entry_parse } => {
+        Command::Parse { bson, entry_parse } => {
+            b = bson;
             Entry::new(entry_parse.label, entry_parse.start, entry_parse.end)
         },
     };
-    println!("{}", to_string(&entry).unwrap());
+    println!(
+        "{}",
+        if b {
+            to_bson(&entry).unwrap().to_string()
+        } else {
+            to_string(&entry).unwrap()
+        }
+    );
 }
 
 #[derive(Debug, StructOpt)]
@@ -23,10 +34,11 @@ struct App {
 enum Command {
     #[structopt(
         name = "parse",
-        about = "Parse some options into a serializable format (currently, \
-                 JSON)"
+        about = "Parse some options into a serializable format"
     )]
     Parse {
+        #[structopt(long = "bson")]
+        bson: bool,
         #[structopt(flatten)]
         entry_parse: EntryParse,
     },

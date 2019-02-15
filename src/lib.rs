@@ -12,6 +12,8 @@ pub struct Entry {
 }
 
 impl Entry {
+    /// Create a new Entry. The end parameter is optional. If `None` is
+    /// provided, the Entry is treated as a range.
     #[inline]
     pub fn new<S: ToString, I: Into<Date>>(
         label: S,
@@ -28,6 +30,8 @@ impl Entry {
         }
     }
 
+    /// Convience function for when you know you are entering a point, not a
+    /// range.
     #[inline]
     pub fn point<S: ToString, I: Into<Date>>(label: S, point: I) -> Self {
         Entry {
@@ -37,6 +41,8 @@ impl Entry {
         }
     }
 
+    /// Convience function from when you know you are entering a range, not a
+    /// point.
     #[inline]
     pub fn range<S: ToString, I: Into<Date>>(
         label: S,
@@ -78,12 +84,16 @@ pub struct Date {
 }
 
 impl Date {
+    /// Construct a new `Date`. Takes anything that can be cast into an `i32`.
     #[inline]
     pub fn new<T: Into<i32>>(year: T) -> Self { Date { year: year.into() } }
 
+    /// Returns true if this date is in the common era, false if not.
     #[inline]
     pub fn commmon_era(&self) -> bool { self.year >= 0 }
 
+    /// Returns the "era text" for this `Date`. This means CE for a common era
+    /// date and BCE for a date before common era.
     #[inline]
     pub fn era_text(&self) -> &'static str {
         if self.commmon_era() {
@@ -93,9 +103,20 @@ impl Date {
         }
     }
 
+    /// Returns the year, without regards to relative positivity from 0 CE.
+    ///
+    /// WARNING: Using this method could result in corrupted dates if not used
+    /// properly.
+    ///
+    /// The type parameter allows you to create another `Date` directly from
+    /// this function, or just extract the year into whatever type of integer
+    /// you want.
     #[inline]
     pub fn abs_year<T: From<i32>>(&self) -> T { self.year.abs().into() }
 
+    /// Returns the raw year.
+    ///
+    /// Be warned, it could be negative.
     #[inline]
     fn year(&self) -> i32 { self.year }
 }
