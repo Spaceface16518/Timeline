@@ -37,7 +37,7 @@ enum Command {
         about = "Parse some options into a serializable format"
     )]
     Parse {
-        #[structopt(long = "bson")]
+        #[structopt(short = "b", long = "bson")]
         bson: bool,
         #[structopt(flatten)]
         entry_parse: EntryParse,
