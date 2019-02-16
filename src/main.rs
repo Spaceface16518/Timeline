@@ -10,7 +10,7 @@ fn main() {
     let entry = match input.subcmd {
         Command::Parse { bson, entry_parse } => {
             b = bson;
-            Entry::new(entry_parse.label, entry_parse.start, entry_parse.end)
+            Entry::new(entry_parse.label, entry_parse.tag, entry_parse.start, entry_parse.end)
         },
     };
     println!(
@@ -50,9 +50,15 @@ struct EntryParse {
     /// The label for this entry
     #[structopt(short = "l", long = "label")]
     label: String,
+
+    /// An optional tag for the entry
+    #[structopt(short = "t", long = "tag")]
+    tag: Option<String>,
+
     /// The start year or point year
     #[structopt(short = "s", long = "start")]
     start: i32,
+
     /// The end year
     #[structopt(short = "e", long = "end")]
     end: i32,

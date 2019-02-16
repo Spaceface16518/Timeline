@@ -7,6 +7,7 @@ use std::{
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Hash)]
 pub struct Entry {
     label: String,
+    tag: Option<String>,
     start: Date,
     end: Date,
 }
@@ -17,11 +18,17 @@ impl Entry {
     #[inline]
     pub fn new<S: ToString, I: Into<Date>>(
         label: S,
+        tag: Option<S>,
         start: I,
         end: I,
     ) -> Self {
         Entry {
             label: label.to_string(),
+            tag: if let Some(s) = tag {
+                Some(s.to_string())
+            } else {
+                None
+            },
             start: start.into(),
             end: end.into(),
         }
@@ -30,10 +37,15 @@ impl Entry {
     /// Convience function for when you know you are entering a point, not a
     /// range.
     #[inline]
-    pub fn point<S: ToString, I: Into<Date>>(label: S, point: I) -> Self {
+    pub fn point<S: ToString, I: Into<Date>>(label: S, tag: Option<S>, point: I) -> Self {
         let point = point.into();
         Entry {
             label: label.to_string(),
+            tag: if let Some(s) = tag {
+                Some(s.to_string())
+             } else {
+                 None
+             },
             start: point.clone(),
             end: point,
         }
@@ -41,6 +53,14 @@ impl Entry {
 
     pub fn label(&self) -> String {
         self.label.clone()
+    }
+
+    pub fn tag(&self) -> Option<String> {
+        if let Some(s) = &self.tag {
+            Some(s.clone())
+        } else {
+            None
+        }
     }
 
     pub fn start(&self) -> Date {
@@ -54,6 +74,9 @@ impl Entry {
 
 impl fmt::Display for Entry {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if let Some(s) = self.tag() {
+            write!(f, "({}): ", s)?
+        }
         write!(f, "{} - {}: {}", self.start, self.end, self.label)
     }
 }
@@ -157,75 +180,7 @@ mod tests {
     fn test_entry_with_end() {
         let entry = Entry::new(
             "test".to_string(),
-            Date { year: 0 },
-            Some(Date { year: 1 }),
-        );
-        assert_eq!(
-            entry,
-            Entry {
-                label: "test".to_string(),
-                start: Date { year: 0 },
-                end: Some(Date { year: 1 })
-            }
-        )
-    }
-
-    #[test]
-    fn test_entry_no_end() {
-        let entry = Entry::new("test".to_string(), Date { year: 0 }, None);
-        assert_eq!(
-            entry,
-            Entry {
-                label: "test".to_string(),
-                start: Date { year: 0 },
-                end: None
-            }
-        )
-    }
-
-    #[test]
-    fn test_entry_traits() {
-        let entry = Entry::new("test", 0, Some(1));
-        assert_eq!(
-            entry,
-            Entry {
-                label: "test".to_string(),
-                start: Date { year: 0 },
-                end: Some(Date { year: 1 })
-            }
-        )
-    }
-
-    #[test]
-    fn test_entry_point() {
-        let entry = Entry::point("test".to_string(), Date { year: 0 });
-        assert_eq!(
-            entry,
-            Entry {
-                label: "test".to_string(),
-                start: Date { year: 0 },
-                end: None
-            }
-        )
-    }
-
-    #[test]
-    fn test_entry_point_traits() {
-        let entry = Entry::point("test", 0);
-        assert_eq!(
-            entry,
-            Entry {
-                label: "test".to_string(),
-                start: Date { year: 0 },
-                end: None
-            }
-        )
-    }
-
-    #[test]
-    fn test_entry_range() {
-        let entry = Entry::range(
-            "test".to_string(),
+            Some("test".to_string()),
             Date { year: 0 },
             Date { year: 1 },
         );
@@ -233,42 +188,77 @@ mod tests {
             entry,
             Entry {
                 label: "test".to_string(),
+                tag: Some("test".to_string()),
                 start: Date { year: 0 },
-                end: Some(Date { year: 1 })
+                end: Date { year: 1 }
             }
         )
     }
 
     #[test]
-    fn test_entry_range_traits() {
-        let entry = Entry::range("test", 0, 1);
+    fn test_entry_no_end() {
+        let entry = Entry::new("test".to_string(), Some("test".to_string()), Date { year: 0 }, Date { year:0 });
         assert_eq!(
             entry,
             Entry {
                 label: "test".to_string(),
+                tag: Some("test".to_string()),
                 start: Date { year: 0 },
-                end: Some(Date { year: 1 })
+                end: Date { year: 0}
             }
         )
     }
 
     #[test]
-    fn test_entry_display_point() {
-        let entry = Entry {
-            label: "test".to_string(),
-            start: Date { year: 0 },
-            end: None,
-        };
-        assert_eq!(entry.to_string(), "0 CE: test".to_string())
+    fn test_entry_traits() {
+        let entry = Entry::new("test", Some("test"), 0, 1);
+        assert_eq!(
+            entry,
+            Entry {
+                label: "test".to_string(),
+                tag: Some("test".to_string()),
+                start: Date { year: 0 },
+                end: Date { year: 1 }
+            }
+        )
+    }
+
+    #[test]
+    fn test_entry_point() {
+        let entry = Entry::point("test".to_string(), Some("test".to_string()), Date { year: 0 });
+        assert_eq!(
+            entry,
+            Entry {
+                label: "test".to_string(),
+                tag: Some("test".to_string()),
+                start: Date { year: 0 },
+                end: Date { year:0}
+            }
+        )
+    }
+
+    #[test]
+    fn test_entry_point_traits() {
+        let entry = Entry::point("test", Some("test"), 0);
+        assert_eq!(
+            entry,
+            Entry {
+                label: "test".to_string(),
+                tag: Some("test".to_string()),
+                start: Date { year: 0 },
+                end: Date { year: 0}
+            }
+        )
     }
 
     #[test]
     fn test_entry_display_range() {
         let entry = Entry {
             label: "test".to_string(),
+            tag: Some("test".to_string()),
             start: Date { year: 0 },
-            end: Some(Date { year: 1 }),
+            end: Date { year: 1 },
         };
-        assert_eq!(entry.to_string(), "0 CE - 1 CE: test".to_string());
+        assert_eq!(entry.to_string(), "(test): 0 CE - 1 CE: test".to_string());
     }
 }
