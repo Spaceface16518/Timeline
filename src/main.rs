@@ -1,5 +1,4 @@
 use bson::to_bson;
-use regex::Regex;
 use serde_yaml::to_string;
 use structopt::StructOpt;
 use timeline::Entry;

@@ -13,4 +13,3 @@ serde = { version = "1.0", features = ["derive"] }
 structopt = "0.2"
 serde_yaml = "0.8.8"
 bson = "0.13"
-regex = "1.1"
