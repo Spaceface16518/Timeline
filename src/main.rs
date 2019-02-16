@@ -10,7 +10,12 @@ fn main() {
     let entry = match input.subcmd {
         Command::Parse { bson, entry_parse } => {
             b = bson;
-            Entry::new(entry_parse.label, entry_parse.tag, entry_parse.start, entry_parse.end)
+            Entry::new(
+                entry_parse.label,
+                entry_parse.tag,
+                entry_parse.start,
+                entry_parse.end,
+            )
         },
     };
     println!(

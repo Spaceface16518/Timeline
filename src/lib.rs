@@ -37,23 +37,25 @@ impl Entry {
     /// Convience function for when you know you are entering a point, not a
     /// range.
     #[inline]
-    pub fn point<S: ToString, I: Into<Date>>(label: S, tag: Option<S>, point: I) -> Self {
+    pub fn point<S: ToString, I: Into<Date>>(
+        label: S,
+        tag: Option<S>,
+        point: I,
+    ) -> Self {
         let point = point.into();
         Entry {
             label: label.to_string(),
             tag: if let Some(s) = tag {
                 Some(s.to_string())
-             } else {
-                 None
-             },
+            } else {
+                None
+            },
             start: point.clone(),
             end: point,
         }
     }
 
-    pub fn label(&self) -> String {
-        self.label.clone()
-    }
+    pub fn label(&self) -> String { self.label.clone() }
 
     pub fn tag(&self) -> Option<String> {
         if let Some(s) = &self.tag {
@@ -63,13 +65,9 @@ impl Entry {
         }
     }
 
-    pub fn start(&self) -> Date {
-        self.start
-    }
+    pub fn start(&self) -> Date { self.start }
 
-    pub fn end(self) -> Date {
-        self.end
-    }
+    pub fn end(self) -> Date { self.end }
 }
 
 impl fmt::Display for Entry {
@@ -197,14 +195,19 @@ mod tests {
 
     #[test]
     fn test_entry_no_end() {
-        let entry = Entry::new("test".to_string(), Some("test".to_string()), Date { year: 0 }, Date { year:0 });
+        let entry = Entry::new(
+            "test".to_string(),
+            Some("test".to_string()),
+            Date { year: 0 },
+            Date { year: 0 },
+        );
         assert_eq!(
             entry,
             Entry {
                 label: "test".to_string(),
                 tag: Some("test".to_string()),
                 start: Date { year: 0 },
-                end: Date { year: 0}
+                end: Date { year: 0 }
             }
         )
     }
@@ -225,14 +228,18 @@ mod tests {
 
     #[test]
     fn test_entry_point() {
-        let entry = Entry::point("test".to_string(), Some("test".to_string()), Date { year: 0 });
+        let entry = Entry::point(
+            "test".to_string(),
+            Some("test".to_string()),
+            Date { year: 0 },
+        );
         assert_eq!(
             entry,
             Entry {
                 label: "test".to_string(),
                 tag: Some("test".to_string()),
                 start: Date { year: 0 },
-                end: Date { year:0}
+                end: Date { year: 0 }
             }
         )
     }
@@ -246,7 +253,7 @@ mod tests {
                 label: "test".to_string(),
                 tag: Some("test".to_string()),
                 start: Date { year: 0 },
-                end: Date { year: 0}
+                end: Date { year: 0 }
             }
         )
     }
