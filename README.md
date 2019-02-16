@@ -16,14 +16,20 @@ I was inspired to make this while taking [AP World History](https://apstudent.co
 Timeline may not be feature complete. These are all the planned (and implemented) features
 
 - [ ] Parse input
-  - [x] into JSON
+  - [x] from command line arguments
+  - [] from YAML
+  - [x] into YAML
   - [x] into BSON
   - [ ] into other formats (open ended)
-- [ ] Store dates
-  - [ ] in internal database
-  - [ ] in user provided database
 - [ ] Display dates
-  - [ ] as storage format
-  - [ ] as text
+  - [ ] as text (YAML in this case)
   - [ ] as graphic
-  - [ ] from database
+
+Storage currently has the following fields
+
+- label
+- tag
+- start
+  - year
+- end (optional)
+  - year

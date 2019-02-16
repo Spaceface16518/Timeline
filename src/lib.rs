@@ -8,7 +8,7 @@ use std::{
 pub struct Entry {
     label: String,
     start: Date,
-    end: Option<Date>,
+    end: Date,
 }
 
 impl Entry {
@@ -18,15 +18,12 @@ impl Entry {
     pub fn new<S: ToString, I: Into<Date>>(
         label: S,
         start: I,
-        end: Option<I>,
+        end: I,
     ) -> Self {
         Entry {
             label: label.to_string(),
             start: start.into(),
-            end: match end {
-                Some(d) => Some(d.into()),
-                None => None,
-            },
+            end: end.into(),
         }
     }
 
@@ -34,36 +31,30 @@ impl Entry {
     /// range.
     #[inline]
     pub fn point<S: ToString, I: Into<Date>>(label: S, point: I) -> Self {
+        let point = point.into();
         Entry {
             label: label.to_string(),
-            start: point.into(),
-            end: None,
+            start: point.clone(),
+            end: point,
         }
     }
 
-    /// Convience function from when you know you are entering a range, not a
-    /// point.
-    #[inline]
-    pub fn range<S: ToString, I: Into<Date>>(
-        label: S,
-        start: I,
-        end: I,
-    ) -> Self {
-        Entry {
-            label: label.to_string(),
-            start: start.into(),
-            end: Some(end.into()),
-        }
+    pub fn label(&self) -> String {
+        self.label.clone()
+    }
+
+    pub fn start(&self) -> Date {
+        self.start
+    }
+
+    pub fn end(self) -> Date {
+        self.end
     }
 }
 
 impl fmt::Display for Entry {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(end_date) = self.end {
-            write!(f, "{} - {}: {}", self.start, end_date, self.label)
-        } else {
-            write!(f, "{}: {}", self.start, self.label)
-        }
+        write!(f, "{} - {}: {}", self.start, self.end, self.label)
     }
 }
 

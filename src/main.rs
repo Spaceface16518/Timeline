@@ -1,6 +1,6 @@
 use bson::to_bson;
 use regex::Regex;
-use serde_json::to_string;
+use serde_yaml::to_string;
 use structopt::StructOpt;
 use timeline::Entry;
 
@@ -37,6 +37,7 @@ enum Command {
         about = "Parse some options into a serializable format"
     )]
     Parse {
+        /// Outputs in BSON instead of YAML
         #[structopt(short = "b", long = "bson")]
         bson: bool,
         #[structopt(flatten)]
@@ -54,5 +55,5 @@ struct EntryParse {
     start: i32,
     /// The end year
     #[structopt(short = "e", long = "end")]
-    end: Option<i32>,
+    end: i32,
 }
