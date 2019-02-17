@@ -23,7 +23,7 @@ Timeline may not be feature complete. These are all the planned (and implemented
   - [x] into JSON
   - [ ] into other formats (open ended)
 - [ ] Display dates
-  - [ ] as text (YAML in this case)
+  - [ ] as text
   - [ ] as graphic
 
 Storage currently has the following fields
