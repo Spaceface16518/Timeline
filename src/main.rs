@@ -1,7 +1,7 @@
 #![deny(clippy::all)]
-
 use serde_json::{to_string, to_string_pretty};
-use serde_yaml::to_string as to_yml;
+use serde_yaml::{from_reader, to_string as to_yml};
+use std::{fs::File, io::BufReader, path::PathBuf};
 use structopt::StructOpt;
 use timeline::Entry;
 
@@ -9,6 +9,7 @@ fn main() {
     let input = App::from_args();
     match input.subcmd {
         Command::Parse { input } => parse(input),
+        Command::Render { input } => render(input),
     };
 }
 
@@ -28,6 +29,11 @@ enum Command {
     Parse {
         #[structopt(flatten)]
         input: Parse,
+    },
+    #[structopt(name = "render", about = "Render a timeline file")]
+    Render {
+        #[structopt(flatten)]
+        input: Render,
     },
 }
 
@@ -67,10 +73,18 @@ struct Parse {
 }
 
 fn parse(parse: Parse) {
-    let entry = Entry::new(parse.label, parse.tag, parse.start, parse.end);
+    let Parse {
+        label,
+        tag,
+        start,
+        end,
+        pretty,
+        yaml,
+    } = parse;
+    let entry = Entry::new(label, tag, start, end);
 
-    if parse.pretty {
-        if parse.yaml {
+    if pretty {
+        if yaml {
             println!(
                 "{}",
                 to_yml(&entry).expect("Could not convert this entry to yaml")
@@ -82,7 +96,7 @@ fn parse(parse: Parse) {
                     .expect("Could not convert this entry to pretty json")
             )
         }
-    } else if parse.yaml {
+    } else if yaml {
         print!(
             "{}",
             to_yml(&entry).expect("Could not convert this entry to yaml")
@@ -92,5 +106,37 @@ fn parse(parse: Parse) {
             "{}",
             to_string(&entry).expect("Could not convert this entry to json")
         )
+    }
+}
+
+#[derive(Debug, StructOpt)]
+struct Render {
+    #[structopt(
+        short = "p",
+        long = "path",
+        help = "Path to the .yml file to load from",
+        parse(from_os_str)
+    )]
+    path: PathBuf,
+    #[structopt(
+        short = "t",
+        long = "text",
+        help = "Print outputs rather than rendering outputs as HTML"
+    )]
+    text: bool,
+}
+
+fn render(render: Render) {
+    let Render { path, text } = render;
+
+    let file = File::open(path).expect("Could not open file at specified path");
+    let reader = BufReader::new(file);
+    let entries: Vec<Entry> = from_reader(reader)
+        .expect("Could not convert this yaml file into Timeline entries");
+
+    if text {
+        entries.into_iter().for_each(|e| println!("{}", e));
+    } else {
+        unimplemented!()
     }
 }

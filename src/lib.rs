@@ -69,15 +69,20 @@ impl Entry {
 
     pub fn start(&self) -> Date { self.start }
 
-    pub fn end(self) -> Date { self.end }
+    pub fn end(&self) -> Date { self.end }
 }
 
 impl fmt::Display for Entry {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if let Some(s) = self.tag() {
-            write!(f, "({}): ", s)?
+            write!(f, "({}): ", s)?;
         }
-        write!(f, "{} - {}: {}", self.start, self.end, self.label)
+        if self.start() == self.end() {
+            write!(f, "{}: ", self.start())?;
+        } else {
+            write!(f, "{} - {}: ", self.start(), self.end())?;
+        }
+        write!(f, "{}", self.label())
     }
 }
 
@@ -269,5 +274,38 @@ mod tests {
             end: Date { year: 1 },
         };
         assert_eq!(entry.to_string(), "(test): 0 CE - 1 CE: test".to_string());
+    }
+
+    #[test]
+    fn test_entry_display_range_no_tag() {
+        let entry = Entry {
+            label: "test".to_string(),
+            tag: None,
+            start: Date { year: 0 },
+            end: Date { year: 1 },
+        };
+        assert_eq!(entry.to_string(), "0 CE - 1 CE: test".to_string());
+    }
+
+    #[test]
+    fn test_entry_display_point() {
+        let entry = Entry {
+            label: "test".to_string(),
+            tag: Some("test".to_string()),
+            start: Date { year: 0 },
+            end: Date { year: 0 },
+        };
+        assert_eq!(entry.to_string(), "(test): 0 CE: test".to_string());
+    }
+
+    #[test]
+    fn test_entry_display_point_no_tag() {
+        let entry = Entry {
+            label: "test".to_string(),
+            tag: None,
+            start: Date { year: 0 },
+            end: Date { year: 0 },
+        };
+        assert_eq!(entry.to_string(), "0 CE: test".to_string());
     }
 }
