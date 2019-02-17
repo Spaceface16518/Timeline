@@ -135,6 +135,8 @@ fn render(render: Render) {
         .expect("Could not convert this yaml file into Timeline entries");
 
     if text {
+        let mut entries = entries;
+        entries.sort();
         entries.into_iter().for_each(|e| println!("{}", e));
     } else {
         unimplemented!()

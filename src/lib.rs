@@ -1,12 +1,12 @@
 #![deny(clippy::all)]
-
 use serde::{Deserialize, Serialize};
 use std::{
+    cmp::Ordering,
     fmt,
     ops::{Add, AddAssign, Sub, SubAssign},
 };
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Hash)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Hash, Ord, Eq)]
 pub struct Entry {
     label: String,
     tag: Option<String>,
@@ -70,6 +70,20 @@ impl Entry {
     pub fn start(&self) -> Date { self.start }
 
     pub fn end(&self) -> Date { self.end }
+}
+
+impl PartialOrd for Entry {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        if let Some(start_ordering) = self.start().partial_cmp(&other.start()) {
+            match start_ordering {
+                Ordering::Equal => self.end().partial_cmp(&other.end()),
+                Ordering::Greater => Some(Ordering::Greater),
+                Ordering::Less => Some(Ordering::Less),
+            }
+        } else {
+            None
+        }
+    }
 }
 
 impl fmt::Display for Entry {
