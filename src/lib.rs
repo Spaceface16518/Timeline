@@ -1,3 +1,5 @@
+#![deny(clippy::all)]
+
 use serde::{Deserialize, Serialize};
 use std::{
     fmt,
@@ -50,7 +52,7 @@ impl Entry {
             } else {
                 None
             },
-            start: point.clone(),
+            start: point,
             end: point,
         }
     }
@@ -102,12 +104,12 @@ impl Date {
 
     /// Returns true if this date is in the common era, false if not.
     #[inline]
-    pub fn commmon_era(&self) -> bool { self.year >= 0 }
+    pub fn commmon_era(self) -> bool { self.year >= 0 }
 
     /// Returns the "era text" for this `Date`. This means CE for a common era
     /// date and BCE for a date before common era.
     #[inline]
-    pub fn era_text(&self) -> &'static str {
+    pub fn era_text(self) -> &'static str {
         if self.commmon_era() {
             "CE"
         } else {
@@ -124,13 +126,13 @@ impl Date {
     /// this function, or just extract the year into whatever type of integer
     /// you want.
     #[inline]
-    pub fn abs_year<T: From<i32>>(&self) -> T { self.year.abs().into() }
+    pub fn abs_year<T: From<i32>>(self) -> T { self.year.abs().into() }
 
     /// Returns the raw year.
     ///
     /// Be warned, it could be negative.
     #[inline]
-    fn year(&self) -> i32 { self.year }
+    fn year(self) -> i32 { self.year }
 }
 
 impl fmt::Display for Date {

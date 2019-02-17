@@ -1,30 +1,55 @@
-use bson::to_bson;
-use serde_yaml::to_string;
+#![deny(clippy::all)]
+
+use serde_json::{to_string, to_string_pretty};
+use serde_yaml::to_string as to_yml;
 use structopt::StructOpt;
 use timeline::Entry;
 
 fn main() {
     let input = App::from_args();
-    let b: bool;
-    let entry = match input.subcmd {
-        Command::Parse { bson, entry_parse } => {
-            b = bson;
-            Entry::new(
+    match input.subcmd {
+        Command::Parse {
+            yaml,
+            pretty,
+            entry_parse,
+        } => {
+            let entry = Entry::new(
                 entry_parse.label,
                 entry_parse.tag,
                 entry_parse.start,
                 entry_parse.end,
-            )
+            );
+
+            if pretty {
+                if yaml {
+                    println!(
+                        "{}",
+                        to_yml(&entry)
+                            .expect("Could not convert this entry to yaml")
+                    )
+                } else {
+                    println!(
+                        "{}",
+                        to_string_pretty(&entry).expect(
+                            "Could not convert this entry to pretty json"
+                        )
+                    )
+                }
+            } else if yaml {
+                print!(
+                    "{}",
+                    to_yml(&entry)
+                        .expect("Could not convert this entry to yaml")
+                )
+            } else {
+                print!(
+                    "{}",
+                    to_string(&entry)
+                        .expect("Could not convert this entry to json")
+                )
+            }
         },
     };
-    println!(
-        "{}",
-        if b {
-            to_bson(&entry).unwrap().to_string()
-        } else {
-            to_string(&entry).unwrap()
-        }
-    );
 }
 
 #[derive(Debug, StructOpt)]
@@ -41,9 +66,18 @@ enum Command {
         about = "Parse some options into a serializable format"
     )]
     Parse {
-        /// Outputs in BSON instead of YAML
-        #[structopt(short = "b", long = "bson")]
-        bson: bool,
+        #[structopt(
+            short = "y",
+            long = "yaml",
+            help = "Outputs in YAML instead of JSON"
+        )]
+        yaml: bool,
+        #[structopt(
+            short = "p",
+            long = "pretty",
+            help = "Pretty prints outputs"
+        )]
+        pretty: bool,
         #[structopt(flatten)]
         entry_parse: EntryParse,
     },
@@ -51,19 +85,27 @@ enum Command {
 
 #[derive(Debug, StructOpt)]
 struct EntryParse {
-    /// The label for this entry
-    #[structopt(short = "l", long = "label")]
+    #[structopt(
+        short = "l",
+        long = "label",
+        help = "The label for this entry"
+    )]
     label: String,
 
-    /// An optional tag for the entry
-    #[structopt(short = "t", long = "tag")]
+    #[structopt(
+        short = "t",
+        long = "tag",
+        help = "An optional tag for the entry"
+    )]
     tag: Option<String>,
 
-    /// The start year or point year
-    #[structopt(short = "s", long = "start")]
+    #[structopt(
+        short = "s",
+        long = "start",
+        help = "The start year or point year"
+    )]
     start: i32,
 
-    /// The end year
-    #[structopt(short = "e", long = "end")]
+    #[structopt(short = "e", long = "end", help = "The end year")]
     end: i32,
 }
