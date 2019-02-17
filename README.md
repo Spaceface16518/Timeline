@@ -17,7 +17,7 @@ Timeline may not be feature complete. These are all the planned (and implemented
 
 - [ ] Parse input
   - [x] from command line arguments
-  - [] from YAML
+  - [ ] from YAML
   - [x] into YAML
   - [x] into JSON
   - [ ] into other formats (open ended)
@@ -28,8 +28,8 @@ Timeline may not be feature complete. These are all the planned (and implemented
 Storage currently has the following fields
 
 - label
-- tag
+- tag (optional)
 - start
   - year
-- end (optional)
+- end
   - year
