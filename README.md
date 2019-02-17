@@ -9,6 +9,7 @@ Parsing and processing of a simple timeline format
 Timeline is a command line tool that helps manage a growing timeline over time. It can parse a file for dates and convert them between serial types. Timeline accomplishes this using [the Rust programming language](https://www.rust-lang.org/) and [Serde](https://serde.rs/), and efficent (de)serialization library.
 
 ## Backstory
+
 I was inspired to make this while taking [AP World History](https://apstudent.collegeboard.org/apcourse/ap-world-history). As I went through my textbook, there were so many dates that I needed to rememeber, sometimes not even presented in chronological order. For this reason, I needed a way to store dates on a timeline in non-chronological order in a way that would allow them to be constructed in chronological order. This was my answer.
 
 ## Features
@@ -33,7 +34,7 @@ Storage currently has the following fields
   - year
 - end
   - year
-  
+
 ## Usage
 
-*Coming soon, sorry*
+_Coming soon, sorry_
