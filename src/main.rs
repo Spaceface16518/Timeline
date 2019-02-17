@@ -81,7 +81,11 @@ fn parse(parse: Parse) {
         pretty,
         yaml,
     } = parse;
-    let entry = Entry::new(label, tag, start, end);
+    let entry = if start == end {
+        Entry::point(label, tag, start)
+    } else {
+        Entry::range(label, tag, start, end)
+    };
 
     if pretty {
         if yaml {

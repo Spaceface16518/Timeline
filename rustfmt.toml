@@ -14,3 +14,4 @@ force_multiline_blocks = true
 normalize_comments = true
 use_field_init_shorthand = true
 format_doc_comments = true
+merge_derives = true

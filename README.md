@@ -16,24 +16,44 @@ I was inspired to make this while taking [AP World History](https://apstudent.co
 
 Timeline may not be feature complete. These are all the planned (and implemented) features
 
-- [ ] Parse input
+- [x] Parse input
   - [x] from command line arguments
-  - [ ] from YAML
+  - [x] from YAML
   - [x] into YAML
   - [x] into JSON
   - [ ] into other formats (open ended)
 - [ ] Display dates
-  - [ ] as text
+  - [x] as text
   - [ ] as graphic
 
-Storage currently has the following fields
+## Schema
 
-- label
-- tag (optional)
-- start
-  - year
-- end
-  - year
+Timeline files currently have the following scheme
+
+```yaml
+- label: a label for this entry
+  tag: an (optional) tag
+  date:
+    start: 1400
+    end: 1750
+```
+
+or
+
+```yaml
+- label: this entry is a singular point instead of a range
+  tag: an (optional) tag
+  date: 600
+```
+
+or
+
+```yaml
+- label: this entry does not have a tag
+  date: 1500
+```
+
+Simply list your entries in standard YAML format.
 
 ## Usage
 
