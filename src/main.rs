@@ -8,47 +8,8 @@ use timeline::Entry;
 fn main() {
     let input = App::from_args();
     match input.subcmd {
-        Command::Parse {
-            yaml,
-            pretty,
-            entry_parse,
-        } => {
-            let entry = Entry::new(
-                entry_parse.label,
-                entry_parse.tag,
-                entry_parse.start,
-                entry_parse.end,
-            );
-
-            if pretty {
-                if yaml {
-                    println!(
-                        "{}",
-                        to_yml(&entry)
-                            .expect("Could not convert this entry to yaml")
-                    )
-                } else {
-                    println!(
-                        "{}",
-                        to_string_pretty(&entry).expect(
-                            "Could not convert this entry to pretty json"
-                        )
-                    )
-                }
-            } else if yaml {
-                print!(
-                    "{}",
-                    to_yml(&entry)
-                        .expect("Could not convert this entry to yaml")
-                )
-            } else {
-                print!(
-                    "{}",
-                    to_string(&entry)
-                        .expect("Could not convert this entry to json")
-                )
-            }
-        },
+        Command::Parse { input
+        } => parse(input),
     };
 }
 
@@ -66,7 +27,14 @@ enum Command {
         about = "Parse some options into a serializable format"
     )]
     Parse {
-        #[structopt(
+        #[structopt(flatten)]
+        input: Parse
+    },
+}
+
+#[derive(Debug, StructOpt)]
+struct Parse {
+#[structopt(
             short = "y",
             long = "yaml",
             help = "Outputs in YAML instead of JSON"
@@ -78,34 +46,56 @@ enum Command {
             help = "Pretty prints outputs"
         )]
         pretty: bool,
-        #[structopt(flatten)]
-        entry_parse: EntryParse,
-    },
+        #[structopt(
+            short = "l",
+            long = "label",
+            help = "The label for this entry"
+        )]
+        label: String,
+
+        #[structopt(
+            short = "t",
+            long = "tag",
+            help = "An optional tag for the entry"
+        )]
+        tag: Option<String>,
+
+        #[structopt(
+            short = "s",
+            long = "start",
+            help = "The start year or point year"
+        )]
+        start: i32,
+
+        #[structopt(short = "e", long = "end", help = "The end year")]
+        end: i32,
 }
 
-#[derive(Debug, StructOpt)]
-struct EntryParse {
-    #[structopt(
-        short = "l",
-        long = "label",
-        help = "The label for this entry"
-    )]
-    label: String,
+fn parse(parse: Parse) {
+    let entry = Entry::new(parse.label, parse.tag, parse.start, parse.end);
 
-    #[structopt(
-        short = "t",
-        long = "tag",
-        help = "An optional tag for the entry"
-    )]
-    tag: Option<String>,
-
-    #[structopt(
-        short = "s",
-        long = "start",
-        help = "The start year or point year"
-    )]
-    start: i32,
-
-    #[structopt(short = "e", long = "end", help = "The end year")]
-    end: i32,
+    if parse.pretty {
+        if parse.yaml {
+            println!(
+                "{}",
+                to_yml(&entry).expect("Could not convert this entry to yaml")
+            )
+        } else {
+            println!(
+                "{}",
+                to_string_pretty(&entry)
+                    .expect("Could not convert this entry to pretty json")
+            )
+        }
+    } else if parse.yaml {
+        print!(
+            "{}",
+            to_yml(&entry).expect("Could not convert this entry to yaml")
+        )
+    } else {
+        print!(
+            "{}",
+            to_string(&entry).expect("Could not convert this entry to json")
+        )
+    }
 }
