@@ -8,10 +8,11 @@ os:
   - linux
   - osx
   - windows
-install: cargo build --all --verbose
 before_script: rustup component add clippy
 script:
-  - cargo clippy --all-targets --all-features -- -D warnings
+  - if [ "${TRAVIS_RUST_VERSION}" != "nightly" ]; then
+    cargo clippy --all-targets --all-features -- -D warnings
+    fi
   - cargo test --all --verbose
 matrix:
   allow_failures:
