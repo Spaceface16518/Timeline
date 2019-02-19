@@ -15,8 +15,7 @@ fn main() {
 
 #[derive(Debug, StructOpt)]
 struct App {
-    #[structopt(subcommand)]
-    /// The subcommand to run
+    #[structopt(subcommand, help = "The subcommand to run")]
     pub subcmd: Command,
 }
 
@@ -152,14 +151,10 @@ fn render(render: Render) {
 
     let file = File::open(path).expect("Could not open file at specified path");
     let reader = BufReader::new(file);
-    let entries: Vec<Entry> = from_reader(reader)
-        .expect("Could not convert this yaml file into Timeline entries");
-
-    if text {
-        let mut entries = entries;
-        entries.sort_unstable();
-        entries
-            .into_iter()
+    let entries: Vec<Entry> = {
+        let mut e: Vec<Entry> = from_reader(reader)
+            .expect("Could not convert this yaml file into Timeline entries");
+        e.into_iter()
             .filter(|e| {
                 if let (Some(m), Some(t)) = (&filter, &e.tag()) {
                     t.contains(m)
@@ -174,7 +169,15 @@ fn render(render: Render) {
                     true
                 }
             })
-            .for_each(|e| println!("{}", e));
+            .collect()
+    };
+
+    if text {
+        let mut entries = entries;
+        entries.sort_unstable();
+        for entry in entries {
+            println!("{}", entry)
+        }
     } else {
         unimplemented!()
     }
