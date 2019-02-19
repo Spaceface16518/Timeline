@@ -123,6 +123,18 @@ struct Render {
     )]
     path: PathBuf,
     #[structopt(
+        short = "f",
+        long = "filter",
+        help = "Filter results by their tag"
+    )]
+    filter: Option<String>,
+    #[structopt(
+        short = "s",
+        long = "search",
+        help = "Filter results by their label"
+    )]
+    search: Option<String>,
+    #[structopt(
         short = "t",
         long = "text",
         help = "Print outputs rather than rendering outputs as HTML"
@@ -131,7 +143,12 @@ struct Render {
 }
 
 fn render(render: Render) {
-    let Render { path, text } = render;
+    let Render {
+        path,
+        filter,
+        search,
+        text,
+    } = render;
 
     let file = File::open(path).expect("Could not open file at specified path");
     let reader = BufReader::new(file);
@@ -141,7 +158,23 @@ fn render(render: Render) {
     if text {
         let mut entries = entries;
         entries.sort_unstable();
-        entries.into_iter().for_each(|e| println!("{}", e));
+        entries
+            .into_iter()
+            .filter(|e| {
+                if let (Some(m), Some(t)) = (&filter, &e.tag()) {
+                    t.contains(m)
+                } else {
+                    true
+                }
+            })
+            .filter(|e| {
+                if let Some(m) = &search {
+                    e.label().contains(m)
+                } else {
+                    true
+                }
+            })
+            .for_each(|e| println!("{}", e));
     } else {
         unimplemented!()
     }
