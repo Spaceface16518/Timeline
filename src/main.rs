@@ -140,7 +140,7 @@ fn render(render: Render) {
 
     if text {
         let mut entries = entries;
-        entries.sort();
+        entries.sort_unstable();
         entries.into_iter().for_each(|e| println!("{}", e));
     } else {
         unimplemented!()
