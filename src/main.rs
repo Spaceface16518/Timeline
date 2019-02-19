@@ -152,7 +152,7 @@ fn render(render: Render) {
     let file = File::open(path).expect("Could not open file at specified path");
     let reader = BufReader::new(file);
     let entries: Vec<Entry> = {
-        let mut e: Vec<Entry> = from_reader(reader)
+        let e: Vec<Entry> = from_reader(reader)
             .expect("Could not convert this yaml file into Timeline entries");
         e.into_iter()
             .filter(|e| {

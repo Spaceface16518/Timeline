@@ -1,6 +1,6 @@
 [package]
 name = "timeline"
-version = "0.4.3"
+version = "0.4.4"
 authors = ["Spaceface16518 <33424649+Spaceface16518@users.noreply.github.com>"]
 edition = "2018"
 
