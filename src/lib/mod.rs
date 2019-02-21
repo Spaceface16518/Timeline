@@ -83,6 +83,20 @@ impl Entry {
             None
         }
     }
+
+    pub fn start(&self) -> i32 {
+        match self.date {
+            EDate::Point(n) => n.year(),
+            EDate::Range { start, .. } => start.year(),
+        }
+    }
+
+    pub fn end(&self) -> i32 {
+        match self.date {
+            EDate::Point(n) => n.year(),
+            EDate::Range { end, .. } => end.year(),
+        }
+    }
 }
 
 impl PartialOrd for Entry {

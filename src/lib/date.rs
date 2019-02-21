@@ -53,7 +53,7 @@ impl Date {
     ///
     /// Be warned, it could be negative.
     #[inline]
-    fn year(self) -> i32 { self.0 }
+    pub fn year(self) -> i32 { self.0 }
 }
 
 impl fmt::Display for Date {

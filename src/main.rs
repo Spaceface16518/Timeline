@@ -1,7 +1,14 @@
 #![deny(clippy::all)]
+use dmsort;
 use serde_json::{to_string, to_string_pretty};
 use serde_yaml::{from_reader, to_string as to_yml};
-use std::{fs::File, io::BufReader, path::PathBuf};
+use std::{
+    cell::RefCell,
+    collections::{BinaryHeap, HashMap},
+    fs::File,
+    io::BufReader,
+    path::PathBuf,
+};
 use structopt::StructOpt;
 use timeline::Entry;
 
@@ -174,9 +181,39 @@ fn render(render: Render) {
 
     if text {
         let mut entries = entries;
-        entries.sort_unstable();
+        dmsort::sort(&mut entries);
+        let end = entries.last().unwrap().end();
+        let start = entries.first().unwrap().start();
+        let interval = (end - start) / (entries.len() as i32 * 3 / 2);
+
+        let mut indices = HashMap::<i32, RefCell<BinaryHeap<Entry>>>::new();
         for entry in entries {
-            println!("{}", entry)
+            let i = (entry.start() - start) / interval;
+            if let Some(v) = indices.get_mut(&i) {
+                let v = v.get_mut();
+                v.push(entry);
+            } else {
+                indices.insert(
+                    i,
+                    RefCell::new({
+                        let mut tmp = BinaryHeap::with_capacity(1);
+                        tmp.push(entry);
+                        tmp
+                    }),
+                );
+            }
+        }
+
+        for i in (start..=end).step_by(interval as usize) {
+            if let Some(v) = indices.remove(&((i - start) / interval)) {
+                let v = v.into_inner();
+                for e in v.into_iter().rev() {
+                    print!("| {} ", e)
+                }
+                println!()
+            } else {
+                println!("|")
+            }
         }
     } else {
         unimplemented!()
