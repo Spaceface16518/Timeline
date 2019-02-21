@@ -1,5 +1,4 @@
 #![deny(clippy::all)]
-use dmsort;
 use serde_json::{to_string, to_string_pretty};
 use serde_yaml::{from_reader, to_string as to_yml};
 use std::{
@@ -181,7 +180,7 @@ fn render(render: Render) {
 
     if text {
         let mut entries = entries;
-        dmsort::sort(&mut entries);
+        entries.sort_unstable();
         let end = entries.last().unwrap().end();
         let start = entries.first().unwrap().start();
         let interval = (end - start) / (entries.len() as i32 * 3 / 2);
