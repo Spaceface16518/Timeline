@@ -1,6 +1,8 @@
 # Timeline
 
 [![Build Status](https://travis-ci.com/Spaceface16518/Timeline.svg?branch=master)](https://travis-ci.com/Spaceface16518/Timeline)
+![License](https://img.shields.io/github/license/Spaceface16518/Timeline.svg)
+![GitHub repo size in bytes](https://img.shields.io/github/repo-size/Spaceface16518/Timeline.svg)
 
 Parsing and processing of a simple timeline format
 
