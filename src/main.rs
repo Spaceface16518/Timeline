@@ -3,13 +3,14 @@ use serde_json::{to_string, to_string_pretty};
 use serde_yaml::{from_reader, to_string as to_yml};
 use std::{
     cell::RefCell,
-    collections::{BinaryHeap, HashMap},
+    collections::{BinaryHeap},
     fs::File,
     io::BufReader,
     path::PathBuf,
 };
 use structopt::StructOpt;
 use timeline::Entry;
+use vec_map::VecMap;
 
 fn main() {
     let input = App::from_args();
@@ -183,12 +184,12 @@ fn render(render: Render) {
         entries.sort_unstable();
         let end = entries.last().unwrap().end();
         let start = entries.first().unwrap().start();
-        let interval = (end - start) / (entries.len() as i32 * 3 / 2);
+        let interval = (end - start) as usize / (entries.len() * 3 / 2);
 
-        let mut indices = HashMap::<i32, RefCell<BinaryHeap<Entry>>>::new();
+        let mut indices = VecMap::<RefCell<BinaryHeap<Entry>>>::new();
         for entry in entries {
-            let i = (entry.start() - start) / interval;
-            if let Some(v) = indices.get_mut(&i) {
+            let i = (entry.start() - start) as usize / interval;
+            if let Some(v) = indices.get_mut(i) {
                 let v = v.get_mut();
                 v.push(entry);
             } else {
@@ -203,8 +204,8 @@ fn render(render: Render) {
             }
         }
 
-        for i in (start..=end).step_by(interval as usize) {
-            if let Some(v) = indices.remove(&((i - start) / interval)) {
+        for i in (start..=end).step_by(interval) {
+            if let Some(v) = indices.remove((i - start) as usize / interval) {
                 print!("| ");
                 for (indent, e) in v.into_inner().into_iter().rev().enumerate()
                 {
