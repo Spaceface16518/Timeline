@@ -205,13 +205,22 @@ fn render(render: Render) {
 
         for i in (start..=end).step_by(interval as usize) {
             if let Some(v) = indices.remove(&((i - start) / interval)) {
-                let v = v.into_inner();
-                for e in v.into_iter().rev() {
-                    print!("| {} ", e)
+                print!("| ");
+                for (indent, e) in v.into_inner().into_iter().rev().enumerate()
+                {
+                    if indent > 0 {
+                        print!(" \\");
+                        let mut curr_indent_pos = 0;
+                        while curr_indent_pos < indent {
+                            print!("\\");
+                            curr_indent_pos += 1;
+                        }
+                    }
+                    print!(" ");
+                    println!("{}", e);
                 }
-                println!()
             } else {
-                println!("|")
+                println!("|");
             }
         }
     } else {
