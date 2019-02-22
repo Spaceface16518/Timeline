@@ -8,6 +8,10 @@ edition = "2018"
 path = "src/lib/mod.rs"
 name = "timeline"
 
+[[bin]]
+path = "src/bin/main.rs"
+name = "timeline"
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 structopt = "0.2"
