@@ -1,11 +1,9 @@
-#![deny(clippy::all)]
 use rayon::prelude::{
     IndexedParallelIterator,
     IntoParallelIterator,
     ParallelIterator,
 };
-use serde_json::{to_string, to_string_pretty};
-use serde_yaml::{from_reader, to_string as to_yml};
+use serde_yaml::{from_reader,};
 use std::{
     cell::RefCell,
     collections::BinaryHeap,
@@ -17,115 +15,8 @@ use structopt::StructOpt;
 use timeline::Entry;
 use vec_map::VecMap;
 
-fn main() {
-    let input = App::from_args();
-    match input.subcmd {
-        Command::Parse { input } => parse(input),
-        Command::Render { input } => render(input),
-    };
-}
-
 #[derive(Debug, StructOpt)]
-struct App {
-    #[structopt(subcommand, help = "The subcommand to run")]
-    pub subcmd: Command,
-}
-
-#[derive(StructOpt, Debug)]
-enum Command {
-    #[structopt(
-        name = "parse",
-        about = "Parse some options into a serializable format"
-    )]
-    Parse {
-        #[structopt(flatten)]
-        input: Parse,
-    },
-    #[structopt(name = "render", about = "Render a timeline file")]
-    Render {
-        #[structopt(flatten)]
-        input: Render,
-    },
-}
-
-#[derive(Debug, StructOpt)]
-struct Parse {
-    #[structopt(
-        short = "y",
-        long = "yaml",
-        help = "Outputs in YAML instead of JSON"
-    )]
-    yaml: bool,
-    #[structopt(short = "p", long = "pretty", help = "Pretty prints outputs")]
-    pretty: bool,
-    #[structopt(
-        short = "l",
-        long = "label",
-        help = "The label for this entry"
-    )]
-    label: String,
-
-    #[structopt(
-        short = "t",
-        long = "tag",
-        help = "An optional tag for the entry"
-    )]
-    tag: Option<String>,
-
-    #[structopt(
-        short = "s",
-        long = "start",
-        help = "The start year or point year"
-    )]
-    start: i32,
-
-    #[structopt(short = "e", long = "end", help = "The end year")]
-    end: i32,
-}
-
-fn parse(parse: Parse) {
-    let Parse {
-        label,
-        tag,
-        start,
-        end,
-        pretty,
-        yaml,
-    } = parse;
-    let entry = if start == end {
-        Entry::point(label, tag, start)
-    } else {
-        Entry::range(label, tag, start, end)
-    };
-
-    if pretty {
-        if yaml {
-            println!(
-                "{}",
-                to_yml(&entry).expect("Could not convert this entry to yaml")
-            )
-        } else {
-            println!(
-                "{}",
-                to_string_pretty(&entry)
-                    .expect("Could not convert this entry to pretty json")
-            )
-        }
-    } else if yaml {
-        print!(
-            "{}",
-            to_yml(&entry).expect("Could not convert this entry to yaml")
-        )
-    } else {
-        print!(
-            "{}",
-            to_string(&entry).expect("Could not convert this entry to json")
-        )
-    }
-}
-
-#[derive(Debug, StructOpt)]
-struct Render {
+pub struct Render {
     #[structopt(
         short = "p",
         long = "path",
@@ -153,7 +44,7 @@ struct Render {
     text: bool,
 }
 
-fn render(render: Render) {
+pub fn render(render: Render) {
     let Render {
         path,
         filter,
