@@ -1,5 +1,5 @@
 use serde_json::{to_string, to_string_pretty};
-use serde_yaml::{ to_string as to_yml};
+use serde_yaml::to_string as to_yml;
 use structopt::StructOpt;
 use timeline::Entry;
 

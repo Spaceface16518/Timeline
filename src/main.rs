@@ -1,9 +1,6 @@
 #![deny(clippy::all)]
+use frontend::{parse, render, Parse, Render};
 use structopt::StructOpt;
-use frontend::render;
-use frontend::Render;
-use frontend::parse;
-use frontend::Parse;
 
 mod frontend;
 
