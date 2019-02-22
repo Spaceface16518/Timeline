@@ -1,9 +1,14 @@
 #![deny(clippy::all)]
+use rayon::prelude::{
+    IndexedParallelIterator,
+    IntoParallelIterator,
+    ParallelIterator,
+};
 use serde_json::{to_string, to_string_pretty};
 use serde_yaml::{from_reader, to_string as to_yml};
 use std::{
     cell::RefCell,
-    collections::{BinaryHeap},
+    collections::BinaryHeap,
     fs::File,
     io::BufReader,
     path::PathBuf,
@@ -161,7 +166,7 @@ fn render(render: Render) {
     let entries: Vec<Entry> = {
         let e: Vec<Entry> = from_reader(reader)
             .expect("Could not convert this yaml file into Timeline entries");
-        e.into_iter()
+        e.into_par_iter()
             .filter(|e| {
                 if let (Some(m), Some(t)) = (&filter, &e.tag()) {
                     t.contains(m)
@@ -205,24 +210,33 @@ fn render(render: Render) {
         }
 
         for i in (start..=end).step_by(interval) {
+            let mut outputs = String::new();
             if let Some(v) = indices.remove((i - start) as usize / interval) {
-                print!("| ");
-                for (indent, e) in v.into_inner().into_iter().rev().enumerate()
-                {
-                    if indent > 0 {
-                        print!(" \\");
-                        let mut curr_indent_pos = 0;
-                        while curr_indent_pos < indent {
-                            print!("\\");
-                            curr_indent_pos += 1;
+                outputs += "| ";
+                let line: String = v
+                    .into_inner()
+                    .into_par_iter()
+                    .rev()
+                    .enumerate()
+                    .map(|(indent, e)| {
+                        let mut pre = String::new();
+                        if indent > 0 {
+                            pre.push_str(" \\");
+                            let mut curr_indent_pos = 0;
+                            while curr_indent_pos < indent {
+                                pre.push('\\');
+                                curr_indent_pos += 1;
+                            }
                         }
-                    }
-                    print!(" ");
-                    println!("{}", e);
-                }
+                        pre.push(' ');
+                        pre + &e.to_string() + "\n"
+                    })
+                    .collect();
+                outputs += &line;
             } else {
-                println!("|");
+                outputs += "|\n";
             }
+            println!("{}", outputs);
         }
     } else {
         unimplemented!()
