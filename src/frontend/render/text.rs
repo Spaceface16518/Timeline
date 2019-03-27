@@ -29,8 +29,8 @@ const fn index(start: i32, end: i32, interval: usize) -> usize {
 
 pub fn text_handler(mut entries: Vec<Entry>) -> String {
     entries.sort_unstable();
-    let end = entries.last().unwrap().end();
-    let start = entries.first().unwrap().start();
+    let end = entries.last().expect("There were no entries").end();
+    let start = entries.first().expect("There were no entries").start();
     let interval = interval(start, end, entries.len());
 
     let indices = indices(entries, start, interval);

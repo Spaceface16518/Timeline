@@ -1,6 +1,6 @@
 [package]
 name = "timeline"
-version = "0.5.5"
+version = "0.5.6"
 authors = ["Spaceface16518 <33424649+Spaceface16518@users.noreply.github.com>"]
 edition = "2018"
 
@@ -9,9 +9,9 @@ path = "src/lib/mod.rs"
 name = "timeline"
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
-structopt = "0.2"
-serde_yaml = "0.8"
-serde_json = "1.0"
-vec_map = "0.8"
-rayon = "1.0"
+serde = { version = "1.0.89", features = ["derive"] }
+structopt = "0.2.15"
+serde_yaml = "0.8.8"
+serde_json = "1.0.39"
+vec_map = "0.8.1"
+rayon = "1.0.3"
